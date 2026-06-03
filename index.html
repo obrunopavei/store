@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Bazar do Bruno — Quadrinhos Marvel & DC, mangás e itens geek com desconto em coleções completas.">
+  <title>Bazar do Bruno — Quadrinhos & Cultura Geek</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ───────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+    :root {
+      --bg: #07070f;
+      --surface: #0e0e1c;
+      --surface-2: #13131f;
+      --surface-3: #1a1a2c;
+      --border: rgba(255,255,255,0.06);
+      --border-hi: rgba(255,255,255,0.14);
+      --text: #e8e8f2;
+      --text-2: #7878a8;
+      --text-3: #3a3a58;
+      --gold: #f0c040;
+      --gold-lt: #ffd878;
+      --gold-dk: #c89820;
+      --green: #25d366;
+      --green-dk: #128c7e;
+      --r-sm: 8px;
+      --r-md: 14px;
+      --r-lg: 20px;
+      --shadow-lg: 0 20px 60px rgba(0,0,0,0.6);
+      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --font-d: 'Bebas Neue', sans-serif;
+      --font-b: 'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-b);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 4vw, 3rem);
+    }
+
+    /* ── Header ─────────────────────────────────────── */
+    .site-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 64px;
+      display: flex; align-items: center;
+      background: rgba(7,7,15,0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .site-header .container { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-mark {
+      width: 38px; height: 38px; border-radius: 50%;
+      overflow: hidden; flex-shrink: 0;
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 0 1px rgba(240,192,64,0.3);
+    }
+    .logo-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .logo-text {
+      font-family: var(--font-d); font-size: 22px; letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--gold-lt), var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .header-wa {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--green); color: #fff;
+      font-weight: 700; font-size: 0.82rem;
+      padding: 8px 16px; border-radius: 100px;
+      text-decoration: none; transition: all 0.25s var(--ease);
+    }
+    .header-wa:hover { background: var(--green-dk); transform: translateY(-1px); }
+
+    /* ── Modal ──────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(4,4,12,0.88);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s var(--ease);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 24px;
+      width: 100%; max-width: 680px;
+      max-height: 90vh; overflow-y: auto;
+      scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent;
+      transform: translateY(28px) scale(0.97);
+      transition: transform 0.35s var(--ease);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+    }
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+    .modal-hero {
+      position: relative; width: 100%; height: 280px;
+      overflow: hidden; background: var(--surface-3); flex-shrink: 0;
+      border-radius: 24px 24px 0 0;
+    }
+    .modal-hero img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .modal-hero-stack {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-hero-stack .stk { position: absolute; }
+    .modal-hero::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
+      background: linear-gradient(to top, var(--surface) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .modal-badges {
+      position: absolute; top: 14px; left: 14px; right: 14px;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; z-index: 10;
+    }
+
+    .modal-body { padding: 1.5rem 2rem 2rem; }
+
+    .modal-vol-label {
+      font-size: 0.72rem; font-weight: 700; color: var(--gold);
+      text-transform: uppercase; letter-spacing: 1.5px;
+      display: flex; align-items: center; gap: 6px; margin-bottom: 0.5rem;
+    }
+    .modal-vol-label::before {
+      content: ''; width: 14px; height: 2px; background: var(--gold); border-radius: 2px;
+    }
+    .modal-title {
+      font-family: var(--font-d); font-size: 2rem; letter-spacing: 0.5px;
+      line-height: 1.05; margin-bottom: 0.3rem;
+    }
+    .modal-sub { font-size: 0.9rem; color: var(--text-2); margin-bottom: 1.5rem; line-height: 1.6; }
+
+    /* Volume list */
+    .vol-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 1.5rem; }
+    .vol-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .vol-row:last-child { border-bottom: none; }
+    .vol-thumb {
+      width: 42px; height: 58px; border-radius: 5px;
+      overflow: hidden; flex-shrink: 0;
+      background: var(--surface-3); border: 1px solid var(--border);
+    }
+    .vol-thumb img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .vol-thumb-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: var(--text-3);
+    }
+    .vol-info { flex: 1; min-width: 0; }
+    .vol-title { font-weight: 700; font-size: 0.88rem; line-height: 1.3; }
+    .vol-spec { font-size: 0.76rem; color: var(--text-2); margin-top: 2px; line-height: 1.4; }
+
+    /* Modal price row */
+    .modal-price-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+    .modal-prices { display: flex; flex-direction: column; gap: 2px; }
+    .modal-orig { font-size: 0.82rem; color: var(--text-3); text-decoration: line-through; }
+    .modal-main { font-family: var(--font-d); font-size: 2.2rem; line-height: 1; }
+    .modal-main.gold { color: var(--gold); }
+    .modal-main.white { color: var(--text); }
+    .modal-save { font-size: 0.75rem; color: #55dda8; font-weight: 600; }
+
+    /* Close button */
+    .modal-close {
+      position: absolute; top: 14px; right: 14px; z-index: 20;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text); font-size: 1.1rem; line-height: 1;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.12); }
+
+    @media (max-width: 500px) {
+      .modal-body { padding: 1.2rem 1.2rem 1.5rem; }
+      .modal-title { font-size: 1.6rem; }
+      .modal-hero { height: 220px; }
+    }
+
+    /* ── Filters ────────────────────────────────────── */
+    .filters-bar {
+      position: sticky; top: 64px; z-index: 90;
+      margin-top: 64px; /* space for fixed header */
+      background: rgba(7,7,15,0.92);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 0;
+    }
+    .filters-scroll {
+      display: flex; gap: 0.6rem; align-items: center;
+      overflow-x: auto; scrollbar-width: none;
+      padding: 4px 0;
+    }
+    .filters-scroll::-webkit-scrollbar { display: none; }
+    .f-btn {
+      flex-shrink: 0;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-2); font-family: var(--font-b);
+      font-size: 0.83rem; font-weight: 500;
+      padding: 8px 18px; border-radius: 100px;
+      cursor: pointer; transition: all 0.22s var(--ease); white-space: nowrap;
+    }
+    .f-btn:hover { border-color: var(--border-hi); color: var(--text); background: var(--surface-2); }
+    .f-btn.active { background: var(--gold); border-color: var(--gold); color: #000; font-weight: 700; }
+
+    /* ── Catalog ────────────────────────────────────── */
+    .catalog { padding: 3rem 0 7rem; }
+    .card { cursor: pointer; }
+    .catalog-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap; margin-bottom: 2.5rem;
+    }
+    .catalog-hd h2 { font-family: var(--font-d); font-size: 2rem; letter-spacing: 1px; }
+    .count-chip {
+      background: var(--surface); border: 1px solid var(--border);
+      font-size: 0.82rem; color: var(--text-2);
+      padding: 6px 14px; border-radius: 100px;
+    }
+
+    /* ── Grid ───────────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* ── Card ───────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      opacity: 0; transform: translateY(22px);
+      transition:
+        opacity 0.55s var(--ease),
+        transform 0.55s var(--ease),
+        border-color 0.25s,
+        background-color 0.25s,
+        box-shadow 0.3s;
+    }
+    .card.in { opacity: 1; transform: translateY(0); }
+    .card.in:hover {
+      transform: translateY(-7px);
+      border-color: var(--border-hi);
+      background-color: var(--surface-2);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* ── Card Image ─────────────────────────────────── */
+    .card-img-wrap {
+      position: relative; width: 100%; height: 290px;
+      overflow: hidden; background: var(--surface-3); flex-shrink: 0;
+    }
+    .card-img-wrap::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 55%;
+      background: linear-gradient(to top, var(--surface) 0%, transparent 100%);
+      pointer-events: none; z-index: 2;
+    }
+    /* gradient syncs with hover bg */
+    .card.in:hover .card-img-wrap::after {
+      background: linear-gradient(to top, var(--surface-2) 0%, transparent 100%);
+    }
+
+    .solo-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s var(--ease);
+    }
+    .card.in:hover .solo-img { transform: scale(1.06); }
+
+    .img-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; color: var(--text-3);
+      background: linear-gradient(135deg, var(--surface-2), var(--surface-3));
+    }
+
+    /* Bundle stack */
+    .stack-wrap {
+      position: relative; width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .stk {
+      position: absolute; width: 46%; aspect-ratio: 2/3;
+      border-radius: 6px; overflow: hidden;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.65);
+      transition: transform 0.5s var(--ease);
+    }
+    .stk img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .stk.s0 { transform: rotate(-9deg) translate(-32%, 9%); z-index: 1; }
+    .stk.s1 { transform: rotate(6deg) translate(28%, 2%); z-index: 2; }
+    .stk.s2 { transform: rotate(-1.5deg) translate(0, -5%); z-index: 3; }
+    .stk.solo { position: relative; width: 62%; transform: none !important; z-index: 1; }
+    .card.in:hover .stk.s0 { transform: rotate(-13deg) translate(-42%, 14%); }
+    .card.in:hover .stk.s1 { transform: rotate(10deg) translate(38%, 4%); }
+    .card.in:hover .stk.s2 { transform: rotate(-2deg) translate(0, -10%); }
+
+    /* Badges */
+    .badges {
+      position: absolute; top: 12px; left: 12px; right: 12px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 8px; z-index: 10;
+    }
+    .tag {
+      background: rgba(0,0,0,0.72); backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text); font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      padding: 5px 10px; border-radius: 100px;
+    }
+    .tag.marvel   { border-color: rgba(226,54,54,0.45);  color: #ff8888; }
+    .tag.dc       { border-color: rgba(74,144,217,0.45); color: #90c0ff; }
+    .tag.mangas   { border-color: rgba(178,114,255,0.45);color: #cc88ff; }
+    .tag.graphic  { border-color: rgba(64,200,150,0.45); color: #55dda8; }
+    .tag.jogos    { border-color: rgba(240,160,48,0.45); color: #ffb84a; }
+    .tag.eletronicos { border-color: rgba(64,160,240,0.45); color: #78ccff; }
+    .tag.outros   { border-color: rgba(160,160,190,0.45);color: #b0b0d8; }
+    .off-badge {
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold-dk));
+      color: #000; font-size: 0.7rem; font-weight: 800;
+      letter-spacing: 1px; padding: 5px 10px; border-radius: 100px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* ── Card Body ──────────────────────────────────── */
+    .card-body {
+      padding: 1.2rem 1.5rem 1.5rem;
+      display: flex; flex-direction: column; flex: 1; gap: 0.45rem;
+    }
+    .vol-label {
+      font-size: 0.72rem; font-weight: 700;
+      color: var(--gold); text-transform: uppercase; letter-spacing: 1.2px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .vol-label::before {
+      content: ''; width: 14px; height: 2px;
+      background: var(--gold); border-radius: 2px;
+    }
+    .card-title {
+      font-family: var(--font-d); font-size: 1.5rem;
+      letter-spacing: 0.5px; line-height: 1.05; color: var(--text);
+    }
+    .card-sub {
+      font-size: 0.82rem; color: var(--text-2); line-height: 1.55;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+    .chip {
+      background: var(--surface-3); border: 1px solid var(--border);
+      color: var(--text-2); font-size: 0.68rem; font-weight: 500;
+      padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+    }
+    .spacer { flex: 1; min-height: 0.5rem; }
+
+    /* ── Price + CTA ────────────────────────────────── */
+    .price-row {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 1rem; padding-top: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    .prices { display: flex; flex-direction: column; gap: 2px; }
+    .price-orig { font-size: 0.8rem; color: var(--text-3); text-decoration: line-through; }
+    .price-main {
+      font-family: var(--font-d); font-size: 1.9rem; line-height: 1;
+    }
+    .price-main.gold { color: var(--gold); }
+    .price-main.white { color: var(--text); }
+    .price-save { font-size: 0.7rem; color: #55dda8; font-weight: 600; }
+
+    .btn-wa {
+      display: flex; align-items: center; gap: 7px;
+      background: linear-gradient(135deg, #25d366, #1aab55);
+      color: #fff; font-weight: 700; font-size: 0.8rem;
+      padding: 10px 16px; border-radius: 10px;
+      text-decoration: none; white-space: nowrap; flex-shrink: 0;
+      transition: all 0.25s var(--ease);
+      border: none; cursor: pointer;
+    }
+    .btn-wa:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,211,102,0.32); }
+    .btn-wa svg { flex-shrink: 0; }
+
+    /* ── Featured Carousel ──────────────────────────── */
+    .featured-section {
+      padding: 2rem 0 0;
+    }
+    .featured-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem; gap: 1rem;
+    }
+    .featured-label {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-d); font-size: 1.5rem; letter-spacing: 1px;
+    }
+    .featured-label::before {
+      content: ''; width: 4px; height: 22px;
+      background: linear-gradient(180deg, var(--gold-lt), var(--gold-dk));
+      border-radius: 4px; flex-shrink: 0;
+    }
+    .carousel-nav { display: flex; gap: 8px; }
+    .carousel-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text-2); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.22s var(--ease); flex-shrink: 0;
+    }
+    .carousel-btn:hover { background: var(--surface-3); border-color: var(--border-hi); color: var(--text); }
+    .carousel-btn:disabled { opacity: 0.3; cursor: default; }
+
+    .carousel-track-wrap {
+      overflow: hidden;
+      user-select: none; -webkit-user-select: none;
+      cursor: grab;
+    }
+    .carousel-track-wrap.dragging { cursor: grabbing; }
+    .carousel-track {
+      display: flex; gap: 1rem;
+      will-change: transform;
+      /* transition controlled entirely by JS */
+    }
+
+    /* Featured card */
+    .fcard {
+      flex: 0 0 260px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden; cursor: pointer;
+      transition:
+        border-color 0.25s, background-color 0.25s,
+        box-shadow 0.3s, transform 0.3s var(--ease);
+      opacity: 0; transform: translateY(16px);
+    }
+    .fcard.in { opacity: 1; transform: translateY(0); }
+    .fcard.in:hover {
+      transform: translateY(-6px);
+      border-color: var(--border-hi);
+      background-color: var(--surface-2);
+      box-shadow: var(--shadow-lg);
+    }
+    .fcard-img {
+      position: relative; width: 100%; height: 200px;
+      overflow: hidden; background: var(--surface-3);
+    }
+    .fcard-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.6s var(--ease);
+    }
+    .fcard.in:hover .fcard-img img { transform: scale(1.06); }
+    .fcard-img::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
+      background: linear-gradient(to top, var(--surface) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .fcard.in:hover .fcard-img::after {
+      background: linear-gradient(to top, var(--surface-2) 0%, transparent 100%);
+    }
+    .fcard-badges {
+      position: absolute; top: 10px; left: 10px; z-index: 10;
+    }
+    .fcard-body {
+      padding: 0.9rem 1.1rem 1.1rem;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .fcard-platform {
+      font-size: 0.68rem; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 1.5px;
+    }
+    .fcard-title {
+      font-family: var(--font-d); font-size: 1.2rem;
+      letter-spacing: 0.5px; line-height: 1.1; color: var(--text);
+    }
+    .fcard-sub {
+      font-size: 0.75rem; color: var(--text-2); line-height: 1.4;
+      display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .fcard-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.5rem; margin-top: 0.6rem;
+      padding-top: 0.7rem; border-top: 1px solid var(--border);
+    }
+    .fcard-price {
+      font-family: var(--font-d); font-size: 1.4rem; color: var(--text); line-height: 1;
+    }
+    .fcard-wa {
+      display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+      background: linear-gradient(135deg, #25d366, #1aab55);
+      color: #fff; text-decoration: none;
+      transition: all 0.22s var(--ease);
+    }
+    .fcard-wa:hover { transform: scale(1.1); box-shadow: 0 4px 14px rgba(37,211,102,0.35); }
+
+    /* Carousel dots */
+    .carousel-dots {
+      display: flex; gap: 6px; justify-content: center; margin-top: 1rem;
+    }
+    .c-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--surface-3); border: 1px solid var(--border);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .c-dot.active { background: var(--gold); border-color: var(--gold); width: 18px; border-radius: 3px; }
+
+    /* Catalog divider */
+    .catalog-divider {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 2.5rem 0 0;
+    }
+    .catalog-divider-line { flex: 1; height: 1px; background: var(--border); }
+    .catalog-divider-lbl {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--text-3); white-space: nowrap;
+    }
+
+    @media (max-width: 500px) {
+      .fcard { flex: 0 0 200px; }
+      .fcard-img { height: 160px; }
+    }
+
+    /* ── No results ─────────────────────────────────── */
+    .empty {
+      grid-column: 1/-1; text-align: center; padding: 5rem 2rem;
+      color: var(--text-3);
+    }
+    .empty h3 { font-family: var(--font-d); font-size: 1.8rem; color: var(--text-2); margin-bottom: 0.5rem; }
+
+    /* ── Footer ─────────────────────────────────────── */
+    .site-footer {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 3rem 0 2rem;
+    }
+    .footer-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 2rem; flex-wrap: wrap; padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;
+    }
+    .footer-tagline { font-size: 0.85rem; color: var(--text-2); margin-top: 7px; }
+    .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; align-items: center; }
+    .footer-links a {
+      color: var(--text-2); text-decoration: none; font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+    .footer-btm {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+    }
+    .footer-btm p { font-size: 0.78rem; color: var(--text-3); }
+
+    /* ── Responsive ─────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero { min-height: 460px; }
+      .hero-stats { gap: 1.5rem; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+      .card-img-wrap { height: 250px; }
+    }
+    @media (max-width: 500px) {
+      .header-wa span { display: none; }
+      .header-wa { padding: 9px 12px; }
+      .grid { grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+      .card-img-wrap { height: 190px; }
+      .card-body { padding: 0.85rem 1rem 1rem; gap: 0.3rem; }
+      .card-title { font-size: 1.15rem; }
+      .price-main { font-size: 1.4rem; }
+      .btn-wa span { display: none; }
+      .btn-wa { padding: 10px; border-radius: 8px; }
+      .chips { display: none; }
+      .footer-top { flex-direction: column; }
+      .footer-btm { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────── -->
+<header class="site-header" id="site-header">
+  <div class="container">
+    <a href="#" class="logo" aria-label="Bazar do Bruno">
+      <div class="logo-mark"><img src="bruno-avatar.jpeg" alt="Bruno"></div>
+      <span class="logo-text">BAZAR DO BRUNO</span>
+    </a>
+    <a href="https://wa.me/5548996436890" class="header-wa" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.556 4.122 1.527 5.854L.057 23.454a.5.5 0 00.595.617l5.741-1.504A11.941 11.941 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.869 0-3.626-.479-5.157-1.322l-.367-.209-3.808.998 1.016-3.706-.228-.376A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      <span>Fale Comigo</span>
+    </a>
+  </div>
+</header>
+
+<!-- ── Modal ────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-label="Detalhes do item">
+  <div class="modal" id="modal">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+<!-- ── Filters ──────────────────────────────────────── -->
+<div id="catalog"></div>
+<nav class="filters-bar" aria-label="Filtros">
+  <div class="container">
+    <div class="filters-scroll" id="filters"></div>
+  </div>
+</nav>
+
+<!-- ── Catalog ──────────────────────────────────────── -->
+<main class="catalog">
+  <div class="container">
+
+    <!-- Featured carousel -->
+    <div class="featured-section">
+      <div class="featured-hd">
+        <span class="featured-label">Em Destaque</span>
+        <div class="carousel-nav">
+          <button class="carousel-btn" id="car-prev" aria-label="Anterior">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button class="carousel-btn" id="car-next" aria-label="Próximo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="carousel-track-wrap">
+        <div class="carousel-track" id="carousel-track"></div>
+      </div>
+      <div class="carousel-dots" id="carousel-dots"></div>
+    </div>
+
+    <!-- Divider -->
+    <div class="catalog-divider">
+      <div class="catalog-divider-line"></div>
+      <span class="catalog-divider-lbl">Catálogo Completo</span>
+      <div class="catalog-divider-line"></div>
+    </div>
+
+    <div class="catalog-hd" style="margin-top:1.5rem">
+      <h2 id="cat-title">Todos os itens</h2>
+      <span class="count-chip" id="cat-count"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</main>
+
+<!-- ── Footer ──────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="logo">
+          <div class="logo-mark"><img src="bruno-avatar.jpeg" alt="Bruno"></div>
+          <span class="logo-text">BAZAR DO BRUNO</span>
+        </div>
+        <p class="footer-tagline">Sua coleção definitiva começa aqui.</p>
+      </div>
+      <nav class="footer-links">
+        <a href="#">Início</a>
+        <a href="#catalog">Catálogo</a>
+        <a href="https://wa.me/5548996436890" target="_blank" rel="noopener">WhatsApp</a>
+      </nav>
+    </div>
+    <div class="footer-btm">
+      <p>© 2025 Bazar do Bruno. Todos os direitos reservados.</p>
+      <p>Imagens meramente ilustrativas. Itens sujeitos à disponibilidade.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+'use strict';
+
+// ── CONFIG ── Replace with your WhatsApp number (country code + area code + number)
+const WA_NUMBER = '5548996436890';
+
+const STANDALONE = new Set(['nenhum', 'avulsos', 'avulsos-marvel']);
+const VOLUME_COUNT = { 'one-punch-man': 23, 'vagabond': 9 };
+
+const BUNDLE_NAMES = {
+  'homem-aranha':        'Homem-Aranha',
+  'vingadores':          'Vingadores',
+  'fabulosos-vingadores':'Fabulosos Vingadores',
+  'x-men':               'X-Men',
+  'deadpool':            'Deadpool',
+  'ms-marvel':           'Ms. Marvel',
+  'guardioes-da-galaxia':'Guardiões da Galáxia',
+  'lanterna-verde':      'Lanterna Verde',
+  'injustica':           'Injustiça',
+  'one-punch-man':       'One-Punch Man',
+  'vagabond':            'Vagabond',
+  'hora-de-aventura':    'Hora de Aventura',
+};
+
+const TAG_CLASS = {
+  'Marvel':'marvel','DC Comics':'dc','Mangás':'mangas',
+  'Graphic Novels':'graphic','Jogos':'jogos',
+  'Eletrônicos':'eletronicos','Outros':'outros'
+};
+
+// ── RAW DATA ───────────────────────────────────────────
+const RAW = [{"titulo":"Homem-Aranha","subtitulo":"Último Desejo","volume":"Vol. Único","editora":"Panini Comics","descricao":"A épica e trágica batalha final entre Peter Parker e o Doutor Octopus, que mudará o destino do herói para sempre.","especificacao":"Contém as edições The Amazing Spider-Man 698 - 700","bundle":"homem-aranha","valor":34.00,"imagem":"https://m.media-amazon.com/images/I/91pnFOlDQeL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Homem-Aranha Superior","subtitulo":"Meu Pior Inimigo","volume":"Vol. 1","editora":"Panini Comics","descricao":"O Doutor Octopus assumiu o corpo de Peter Parker e agora tenta provar que pode ser um Homem-Aranha melhor e superior.","especificacao":"Contém as edições Superior Spider-Man 1 - 5","bundle":"homem-aranha","valor":34.00,"imagem":"https://m.media-amazon.com/images/I/A1rfVMgFdvL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Homem-Aranha Superior","subtitulo":"Mente Conturbada","volume":"Vol. 2","editora":"Panini Comics","descricao":"Otto Octavius continua sua cruzada como o Homem-Aranha, lidando com vilões enquanto a consciência de Peter Parker tenta lutar pelo controle.","especificacao":"Contém as edições Superior Spider-Man 6 - 10","bundle":"homem-aranha","valor":34.00,"imagem":"https://m.media-amazon.com/images/I/91opFsB5i5L.jpg","tag":"Marvel"},{"titulo":"Homem-Aranha Superior","subtitulo":"Sem Saída","volume":"Vol. 3","editora":"Panini Comics","descricao":"A tensão aumenta na Balsa enquanto o Homem-Aranha Superior toma medidas extremas para lidar com Esmaga-Aranhas e outros inimigos mortais.","especificacao":"Contém as edições Superior Spider-Man 11 - 16","bundle":"homem-aranha","valor":34.00,"imagem":"https://m.media-amazon.com/images/I/61rt6w8VcuL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Homem-Aranha","subtitulo":"Negócios de Família","volume":"Vol. Único","editora":"Panini Comics","descricao":"Peter Parker se depara com o crime organizado internacional e descobre a existência de uma irmã que ele nunca soube que tinha.","especificacao":"Contém a Graphic Novel Original Spider-Man: Family Business","bundle":"homem-aranha","valor":34.00,"imagem":"https://rika.vtexassets.com/arquivos/ids/284228/homem-aranha-negocios-de-familia.jpg?v=636131975686600000","tag":"Marvel"},{"titulo":"Vingadores","subtitulo":"Prelúdio para Infinito","volume":"Vol. Único","editora":"Panini Comics","descricao":"Os Vingadores enfrentam ameaças em escala cósmica que preparam o terreno para o megaevento Infinito.","especificacao":"Contém as edições Avengers 12 - 17","bundle":"vingadores","valor":28.33,"imagem":"https://m.media-amazon.com/images/I/A1foXEhfrVL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Vingadores","subtitulo":"O Último Evento Branco","volume":"Vol. Único","editora":"Panini Comics","descricao":"A criação de um novo e superpoderoso Estigma na Terra chama a atenção dos Vingadores.","especificacao":"Contém as edições Avengers 7 - 11","bundle":"vingadores","valor":28.33,"imagem":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQL6lJeib1YGOZj-jw5QUyUNyBz2N_S38Unw&s","tag":"Marvel"},{"titulo":"Vingadores","subtitulo":"Mundo de Vingadores","volume":"Vol. Único","editora":"Panini Comics","descricao":"O início da épica saga onde a equipe se expande como nunca antes para enfrentar as perigosas incursões.","especificacao":"Contém as edições Avengers 1 - 6","bundle":"vingadores","valor":28.33,"imagem":"https://m.media-amazon.com/images/I/81czyYh+PWL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Vingadores","subtitulo":"Infinito","volume":"Vol. Único","editora":"Panini Comics","descricao":"Os Heróis Mais Poderosos da Terra deixam o planeta para lutar contra a força letal dos Construtores.","especificacao":"Contém as edições Avengers 18 - 23","bundle":"vingadores","valor":28.33,"imagem":"https://http2.mlstatic.com/D_NQ_NP_881789-MLB44574718941_012021-O.webp","tag":"Marvel"},{"titulo":"Novos Vingadores","subtitulo":"Tudo Morre","volume":"Vol. Único","editora":"Panini Comics","descricao":"Os Illuminati se reúnem em segredo para tomar decisões impensáveis a fim de impedir o colapso do Multiverso.","especificacao":"Contém as edições New Avengers 1 - 6","bundle":"vingadores","valor":28.34,"imagem":"https://m.media-amazon.com/images/I/817emlYEw7L._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Novos Vingadores","subtitulo":"Infinito","volume":"Vol. Único","editora":"Panini Comics","descricao":"Aproveitando a ausência da equipe principal no espaço, Thanos invade a Terra.","especificacao":"Contém as edições New Avengers 7 - 12","bundle":"vingadores","valor":28.34,"imagem":"https://http2.mlstatic.com/D_NQ_NP_896097-MLB25626097905_052017-O.webp","tag":"Marvel"},{"titulo":"Fabulosos Vingadores","subtitulo":"A Sombra Vermelha","volume":"Vol. Único","editora":"Panini Comics","descricao":"Capitão América e Wolverine formam o Esquadrão Unidade dos Vingadores e X-Men.","especificacao":"Contém as edições Uncanny Avengers 1 - 5","bundle":"fabulosos-vingadores","valor":25.00,"imagem":"https://m.media-amazon.com/images/I/719GtQ5k99L._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Fabulosos Vingadores","subtitulo":"Vingar a Terra","volume":"Vol. Único","editora":"Panini Comics","descricao":"O Esquadrão Unidade precisa superar as manipulações temporais de Kang e lutar em uma linha do tempo alternativa.","especificacao":"Contém as edições Uncanny Avengers 18 - 22","bundle":"fabulosos-vingadores","valor":25.00,"imagem":"https://m.media-amazon.com/images/I/91U12UNHBUL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Fabulosos Vingadores","subtitulo":"Os Gêmeos do Apocalipse","volume":"Vol. Único","editora":"Panini Comics","descricao":"A equipe é testada ao limite com a chegada dos letais Gêmeos do Apocalipse.","especificacao":"Contém as edições Uncanny Avengers 6 - 11","bundle":"fabulosos-vingadores","valor":25.00,"imagem":"https://m.media-amazon.com/images/I/91FF9vIWsKL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Fabulosos Vingadores","subtitulo":"Ragnarok","volume":"Vol. Único","editora":"Panini Comics","descricao":"Os Gêmeos do Apocalipse colocam em prática seu plano final para destruir a Terra.","especificacao":"Contém as edições Uncanny Avengers 12 - 17","bundle":"fabulosos-vingadores","valor":25.00,"imagem":"https://m.media-amazon.com/images/I/A1KI0n6x3kL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Novíssimos X-Men","subtitulo":"X-Men de Ontem","volume":"Vol. 1","editora":"Panini Comics","descricao":"O Fera viaja no tempo e traz os cinco X-Men originais para o presente.","especificacao":"Contém as edições All-New X-Men 1 - 5","bundle":"x-men","valor":31.43,"imagem":"https://m.media-amazon.com/images/I/91VDFOWBNEL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Novíssimos X-Men","subtitulo":"Criando Raízes","volume":"Vol. 2","editora":"Panini Comics","descricao":"Os jovens X-Men do passado decidem ficar no presente, lidando com novas ameaças.","especificacao":"Contém as edições All-New X-Men 6 - 10","bundle":"x-men","valor":31.43,"imagem":"https://m.media-amazon.com/images/I/81luVG442tL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Novíssimos X-Men","subtitulo":"Deslocados","volume":"Vol. 3","editora":"Panini Comics","descricao":"Os jovens mutantes originais encontram novos aliados e inimigos em sua jornada no presente.","especificacao":"Contém as edições All-New X-Men 11 - 15","bundle":"x-men","valor":31.43,"imagem":"https://m.media-amazon.com/images/I/A1jWwM5c5EL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Fabulosos X-Men","subtitulo":"Destroçados","volume":"Vol. 1","editora":"Panini Comics","descricao":"Ciclope e sua nova equipe de X-Men operam secretamente, lutando para resgatar novos mutantes.","especificacao":"Contém as edições Uncanny X-Men 1 - 5","bundle":"x-men","valor":31.43,"imagem":"https://m.media-amazon.com/images/I/91tmcBhlcIL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Fabulosos X-Men","subtitulo":"Revolução","volume":"Vol. 2","editora":"Panini Comics","descricao":"A equipe rebelde de Ciclope enfrenta as consequências de suas ações enquanto treinam novos mutantes.","especificacao":"Contém as edições Uncanny X-Men 6 - 11","bundle":"x-men","valor":31.43,"imagem":"https://rika.vtexassets.com/arquivos/ids/307050/Fabulosos-X-Men-Revolucao.jpg?v=636705606556270000","tag":"Marvel"},{"titulo":"X-Men","subtitulo":"O Bom, o Mal e o Inumano","volume":"Vol. Único","editora":"Panini Comics","descricao":"Os mutantes precisam lidar com as instabilidades de seus próprios poderes e com a chegada dos Inumanos.","especificacao":"Contém as edições Uncanny X-Men 12 - 15 e Inhumanity 1","bundle":"x-men","valor":31.43,"imagem":"https://m.media-amazon.com/images/I/81vst-Bc0lL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"X-Men","subtitulo":"A Batalha do Átomo","volume":"Vol. Único","editora":"Panini Comics","descricao":"X-Men do futuro viajam ao presente para forçar os X-Men originais a retornarem ao seu próprio tempo.","especificacao":"Contém Battle of the Atom 1-2, All-New X-Men 16-17, X-Men 5-6, Uncanny X-Men 12-13 e WatX 36-37","bundle":"x-men","valor":31.42,"imagem":"https://m.media-amazon.com/images/I/A1nUmx5gHBL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Deadpool","subtitulo":"Meus Queridos Presidentes","volume":"Vol. Único","editora":"Panini Comics","descricao":"Deadpool é contratado pela S.H.I.E.L.D. para derrotar todos os ex-presidentes ressuscitados dos EUA.","especificacao":"Contém as edições Deadpool 1 - 6","bundle":"deadpool","valor":30.00,"imagem":"https://m.media-amazon.com/images/I/A1iGGmydxEL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Deadpool","subtitulo":"Caçador de Almas","volume":"Vol. Único","editora":"Panini Comics","descricao":"O Mercenário Tagarela faz um acordo com um demônio e embarca em uma jornada para caçar almas.","especificacao":"Contém as edições Deadpool 7 - 12","bundle":"deadpool","valor":30.00,"imagem":"https://m.media-amazon.com/images/I/718Y3Put6WL._SY385_.jpg","tag":"Marvel"},{"titulo":"Deadpool","subtitulo":"Três Homens em Conflito","volume":"Vol. Único","editora":"Panini Comics","descricao":"Wade Wilson junta forças com o Capitão América e Wolverine para investigar um passado sombrio.","especificacao":"Contém as edições Deadpool 13 - 19","bundle":"deadpool","valor":30.00,"imagem":"https://m.media-amazon.com/images/I/91SMUzEjhfL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Deadpool","subtitulo":"Pulp","volume":"Vol. Único","editora":"Panini Comics","descricao":"Em uma releitura noir eletrizante dos anos 1950, o agente da CIA Wade Wilson tenta impedir uma conspiração.","especificacao":"Contém as edições Deadpool Pulp 1 - 4","bundle":"deadpool","valor":30.00,"imagem":"","tag":"Marvel"},{"titulo":"Ms. Marvel","subtitulo":"Nada Normal","volume":"Vol. Único","editora":"Panini Comics","descricao":"Kamala Khan ganha poderes extraordinários e assume o manto de sua heroína favorita.","especificacao":"Contém as edições Ms. Marvel 1 - 5","bundle":"ms-marvel","valor":30.00,"imagem":"https://m.media-amazon.com/images/I/818uwBSZ1SL._SY425_.jpg","tag":"Marvel"},{"titulo":"Ms. Marvel","subtitulo":"Questões Mil","volume":"Vol. Único","editora":"Panini Comics","descricao":"Kamala protege Jersey City e enfrenta o misterioso vilão conhecido como o Inventor.","especificacao":"Contém as edições Ms. Marvel 6 - 11","bundle":"ms-marvel","valor":30.00,"imagem":"https://m.media-amazon.com/images/I/91SK0bFFpdL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Ms. Marvel","subtitulo":"Apaixonada","volume":"Vol. Único","editora":"Panini Comics","descricao":"A vida de Kamala vira com a chegada de Kamran, um rapaz inumano com segredos perigosos.","especificacao":"Contém as edições Ms. Marvel 12 - 15","bundle":"ms-marvel","valor":30.00,"imagem":"https://m.media-amazon.com/images/I/71dL+SbJ5pL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Ms. Marvel","subtitulo":"Últimos Dias","volume":"Vol. Único","editora":"Panini Comics","descricao":"Com o fim do mundo, Kamala tem a chance de conhecer a Capitã Marvel.","especificacao":"Contém as edições Ms. Marvel 16 - 19","bundle":"ms-marvel","valor":30.00,"imagem":"https://m.media-amazon.com/images/I/91D3haZumQL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Guardiões da Galáxia","subtitulo":"Vingadores Cósmicos","volume":"Vol. Único","editora":"Panini Comics","descricao":"O Senhor das Estrelas, Gamora, Drax, Rocket e Groot ganham reforço do Homem de Ferro.","especificacao":"Contém Guardians of the Galaxy 0.1, 1 - 3 e Tomorrow's Avengers 1","bundle":"guardioes-da-galaxia","valor":35.00,"imagem":"https://m.media-amazon.com/images/I/81szxCKka6S.jpg","tag":"Marvel"},{"titulo":"Guardiões da Galáxia","subtitulo":"Angela","volume":"Vol. Único","editora":"Panini Comics","descricao":"O espaço-tempo rompido traz a letal guerreira Angela para rota de colisão com os Guardiões.","especificacao":"Contém as edições Guardians of the Galaxy 4 - 10","bundle":"guardioes-da-galaxia","valor":35.00,"imagem":"https://m.media-amazon.com/images/I/A1ecBmEv4zL.jpg","tag":"Marvel"},{"titulo":"Doutor Destino","subtitulo":"Os Livros do Destino","volume":"Vol. Único","editora":"Panini Comics","descricao":"Uma jornada reveladora ao passado de Victor Von Doom, explorando as origens de um dos maiores vilões da Marvel.","especificacao":"Contém as edições Books of Doom 1 - 6","bundle":"avulsos-marvel","valor":15.00,"imagem":"https://m.media-amazon.com/images/I/81KRkkC0NEL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Caveira Vermelha","subtitulo":"Encarnado","volume":"Vol. Único","editora":"Panini Comics","descricao":"A sombria história de origem de Johann Schmidt, sua ascensão até se tornar o temido Caveira Vermelha.","especificacao":"Contém as edições Red Skull: Incarnate 1 - 5","bundle":"avulsos-marvel","valor":15.00,"imagem":"https://m.media-amazon.com/images/I/919w0mXG5sL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"O Capuz","subtitulo":"O Sangue que vem das Pedras","volume":"Vol. Único","editora":"Panini Comics","descricao":"Parker Robbins encontra um manto místico e se transforma no perigoso senhor do crime.","especificacao":"Contém as edições The Hood 1 - 6","bundle":"avulsos-marvel","valor":15.00,"imagem":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm6mRWIy4NCPjie5ah5yQVZr9mcvwc3A2zrg&s","tag":"Marvel"},{"titulo":"Luke Cage","subtitulo":"Noir","volume":"Vol. Único","editora":"Panini Comics","descricao":"Nas ruas do Harlem durante a Lei Seca, Luke Cage retorna para investigar um assassinato.","especificacao":"Contém as edições Luke Cage Noir 1 - 4","bundle":"avulsos-marvel","valor":15.00,"imagem":"https://m.media-amazon.com/images/I/81OT5Rhd+oL._UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Viúva Negra","subtitulo":"","volume":"Vol. 1","editora":"Panini Comics","descricao":"Natasha Romanoff mergulha no mundo sombrio da espionagem internacional para expiar os pecados de seu passado.","especificacao":"Contém as edições Black Widow 1 - 6","bundle":"avulsos-marvel","valor":15.00,"imagem":"https://rika.vtexassets.com/arquivos/ids/466712-800-auto?v=638622844607530000&width=800&height=auto&aspect=true","tag":"Marvel"},{"titulo":"Pantera Negra","subtitulo":"Uma Nação aos Nossos Pés","volume":"Livro 1","editora":"Panini Comics","descricao":"T'Challa enfrenta uma revolta armada que ameaça derrubar a monarquia de Wakanda.","especificacao":"Contém as edições Black Panther 1 - 4","bundle":"avulsos-marvel","valor":15.00,"imagem":"https://m.media-amazon.com/images/I/916ozaD5SlL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"O Indestrutível Hulk","subtitulo":"Agente da S.H.I.E.L.D.","volume":"Vol. Único","editora":"Panini Comics","descricao":"Bruce Banner faz um acordo inusitado com a S.H.I.E.L.D., oferecendo o poder destrutivo do Hulk como arma.","especificacao":"Contém as edições Indestructible Hulk 1 - 5","bundle":"avulsos-marvel","valor":50.00,"imagem":"https://m.media-amazon.com/images/I/91bCQlTpJwL.jpg","tag":"Marvel"},{"titulo":"Marvel Legado","subtitulo":"Edição Especial","volume":"Edição Especial","editora":"Panini Comics","descricao":"Um ponto de virada épico para o Universo Marvel, conectando os primeiros heróis de 1.000.000 a.C. às lendas modernas.","especificacao":"Contém a edição Marvel Legacy 1","bundle":"avulsos-marvel","valor":15.00,"imagem":"https://m.media-amazon.com/images/I/91POyotDdTL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Vingadores","subtitulo":"A Era de Ultron","volume":"Vol. Único","editora":"Panini Comics","descricao":"A inteligência artificial Ultron conquista o mundo e dizima a humanidade. Os heróis sobreviventes tomam decisões extremas.","especificacao":"Contém as edições Age of Ultron 1 - 10","bundle":"avulsos-marvel","valor":25.00,"imagem":"https://m.media-amazon.com/images/I/81zeTCvq1hL._AC_UF1000,1000_QL80_.jpg","tag":"Marvel"},{"titulo":"Injustiça","subtitulo":"Deuses Entre Nós (Ano Um)","volume":"Vol. 1","editora":"Panini Comics","descricao":"O Coringa engana o Superman para cometer uma atrocidade irreparável, desencadeando a criação de um regime totalitário.","especificacao":"Contém as edições Injustice: Gods Among Us 1 - 12","bundle":"injustica","valor":13.33,"imagem":"https://lh5.googleusercontent.com/proxy/GfNlcxfHnGMO7l5c5R601_2-yazKGhPES-uKJH4ihA8AL2NwqY--XzdZxq3VKr2Y-kwBA_Y6WQWd8a6Zk2VRa0hDECLBM5M3CUMLwA6FtlvrTa4wuWN7f6hpcqjEHMP8K2OxDUrSS_mcu0XorcA","tag":"DC Comics"},{"titulo":"Injustiça","subtitulo":"Deuses Entre Nós (Ano Dois)","volume":"Vol. 2","editora":"Panini Comics","descricao":"A Tropa dos Lanternas Verdes intervém para tentar parar o tirano de Krypton, resultando em uma guerra cósmica.","especificacao":"Contém as edições Injustice Year Two 1 - 12","bundle":"injustica","valor":13.33,"imagem":"","tag":"DC Comics"},{"titulo":"Injustiça","subtitulo":"Deuses Entre Nós (Ano Três)","volume":"Vol. 3","editora":"Panini Comics","descricao":"A Resistência de Batman recorre às artes místicas. Constantine e o Monstro do Pântano entram no conflito.","especificacao":"Contém as edições Injustice Year Three 1 - 12","bundle":"injustica","valor":13.33,"imagem":"","tag":"DC Comics"},{"titulo":"Injustiça","subtitulo":"Deuses Entre Nós (Ano Quatro)","volume":"Vol. 4","editora":"Panini Comics","descricao":"Os deuses do Olimpo decidem interferir no destino da Terra. Uma batalha mitológica se instaura.","especificacao":"Contém as edições Injustice Year Four 1 - 12","bundle":"injustica","valor":13.33,"imagem":"","tag":"DC Comics"},{"titulo":"Injustiça","subtitulo":"Deuses Entre Nós (Ano Cinco)","volume":"Vol. 5","editora":"Panini Comics","descricao":"Os piores supervilões tornam-se ferramentas no desespero de Batman para derrubar o ditador kryptoniano.","especificacao":"Contém as edições Injustice Year Five 1 - 20","bundle":"injustica","valor":13.33,"imagem":"","tag":"DC Comics"},{"titulo":"Injustiça","subtitulo":"Deuses Entre Nós (Marco Zero)","volume":"Vol. 6","editora":"Panini Comics","descricao":"Os eventos do videogame recontados pela perspectiva única e imprevisível da Arlequina.","especificacao":"Contém as edições Injustice Ground Zero 1 - 12","bundle":"injustica","valor":13.35,"imagem":"","tag":"DC Comics"},{"titulo":"Lanterna Verde","subtitulo":"Agente Laranja","volume":"Vol. Único","editora":"Panini Comics","descricao":"Hal Jordan enfrenta a ganância encarnada de Larfleeze, o único portador da luz laranja da avareza.","especificacao":"Contém as edições Green Lantern 39 - 42","bundle":"lanterna-verde","valor":20.00,"imagem":"https://m.media-amazon.com/images/I/717dOa55ySL._AC_UF1000,1000_QL80_.jpg","tag":"DC Comics"},{"titulo":"Lanterna Verde","subtitulo":"A Guerra dos Anéis","volume":"Vol. 2","editora":"Panini Comics","descricao":"A batalha entre a Tropa dos Lanternas Verdes e a Tropa Sinestro atinge seu clímax.","especificacao":"Contém Green Lantern 24 - 25 e Green Lantern Corps 17 - 19","bundle":"lanterna-verde","valor":20.00,"imagem":"https://m.media-amazon.com/images/I/71g-3DvRpLL._AC_UF1000,1000_QL80_.jpg","tag":"DC Comics"},{"titulo":"Lanterna Verde","subtitulo":"A Ira dos Lanternas Vermelhos","volume":"Vol. Único","editora":"Panini Comics","descricao":"A fúria consome o cosmos com a ascensão de Atrocitus e sua brutal Tropa dos Lanternas Vermelhos.","especificacao":"Contém Green Lantern 26 - 28 e 36 - 38","bundle":"lanterna-verde","valor":20.00,"imagem":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV9QKXeNtnS9GeuSC_5VB8eJ3kDPhXg5wKgw&s","tag":"DC Comics"},{"titulo":"Lanterna Verde","subtitulo":"No Dia Mais Claro","volume":"Vol. Único","editora":"Panini Comics","descricao":"Doze heróis e vilões são ressuscitados por uma luz branca. Uma nova ameaça cósmica surge.","especificacao":"Contém as edições Brightest Day 0 - 12","bundle":"lanterna-verde","valor":100.00,"imagem":"https://lh3.googleusercontent.com/proxy/CsGdfmwv8BckN58fovgjozQLYRnijcAtg6AXNDn9ZUltG2xWDjgssPA89ZDNb4-1u0DgZ-jJ6gBg7La7wiZPIDjWoOQ8Z8fRP5gqUxC714CZvAVCI18WgRPPpR7ox5sOYf8zqJR8w8LZwLv0bvE","tag":"DC Comics"},{"titulo":"One-Punch Man","subtitulo":"","volume":"Vols. 1 ao 23","editora":"Panini Comics","descricao":"Saitama é um herói que derrota qualquer inimigo com apenas um soco, sofrendo de um tédio profundo.","especificacao":"Contém os volumes 1 ao 23","bundle":"one-punch-man","valor":550.00,"imagem":"https://upload.wikimedia.org/wikipedia/pt/3/3f/OnePunchMan_manga_capa.png","tag":"Mangás"},{"titulo":"Vagabond","subtitulo":"","volume":"Vols. 1 ao 9","editora":"Panini Comics","descricao":"A aclamada obra que narra a jornada épica de Shinmen Takezo até se tornar Miyamoto Musashi.","especificacao":"Contém os volumes 1 ao 9","bundle":"vagabond","valor":170.00,"imagem":"https://m.media-amazon.com/images/I/91+9dLuElKL._AC_UF1000,1000_QL80_.jpg","tag":"Mangás"},{"titulo":"Kill la Kill","subtitulo":"","volume":"Vols. 1 ao 3","editora":"JBC","descricao":"Ryuko Matoi chega à Academia Honnouji armada com uma Metade de Tesoura em busca de vingança.","especificacao":"Coleção completa (Volumes 1 ao 3)","bundle":"avulsos","valor":30.00,"imagem":"https://editorajbc.com.br/wp-content/uploads/2016/03/capa_kill_la_kill_01_g.jpg","tag":"Mangás"},{"titulo":"Puella Magi Madoka Magica","subtitulo":"","volume":"Vols. 1 ao 3","editora":"JBC","descricao":"Uma reviravolta sombria no gênero de garotas mágicas, com Madoka Kaname e os pesados sacrifícios.","especificacao":"Coleção completa (Volumes 1 ao 3)","bundle":"avulsos","valor":30.00,"imagem":"https://cdn.kobo.com/book-images/5bd5006e-c38d-488b-abb1-07290b885416/1200/1200/False/puella-magi-madoka-magica-vol-1-2.jpg","tag":"Mangás"},{"titulo":"The Wedding Eve","subtitulo":"","volume":"Vol. Único","editora":"Panini Comics","descricao":"Uma delicada coletânea de histórias curtas focadas em relacionamentos humanos e momentos de grandes mudanças.","especificacao":"Volume Único","bundle":"avulsos","valor":10.00,"imagem":"https://m.media-amazon.com/images/I/81uNDjmDNmL._AC_UF1000,1000_QL80_.jpg","tag":"Mangás"},{"titulo":"Hal","subtitulo":"","volume":"Vol. Único","editora":"Panini Comics","descricao":"Um robô com aparência humana é programado para substituir Hal e aprender a amar Kurumi.","especificacao":"Volume Único","bundle":"avulsos","valor":10.00,"imagem":"https://m.media-amazon.com/images/I/811761k0bmL._AC_UF1000,1000_QL80_.jpg","tag":"Mangás"},{"titulo":"O Homem que Foge","subtitulo":"","volume":"Vol. Único","editora":"JBC","descricao":"Um drama psicológico sobre as constantes fugas físicas e emocionais das pessoas diante de pressões sociais.","especificacao":"Volume Único","bundle":"avulsos","valor":10.00,"imagem":"https://www.jbchost.com.br/editorajbc/wp-content/uploads/2017/01/Nigeru-Otoko-Capa_p.jpg","tag":"Mangás"},{"titulo":"Um Litro de Lágrimas","subtitulo":"","volume":"Vol. Único","editora":"NewPOP","descricao":"A adaptação em mangá do comovente diário de Aya Kito, uma jovem que lutou contra uma doença degenerativa.","especificacao":"Volume Único","bundle":"avulsos","valor":10.00,"imagem":"https://m.media-amazon.com/images/I/9180620nsjL._AC_UF1000,1000_QL80_.jpg","tag":"Mangás"},{"titulo":"Hora de Aventura","subtitulo":"Edição Matemática","volume":"Vol. 1","editora":"Panini Books","descricao":"As incríveis aventuras de Finn e Jake na mágica e bizarra Terra de Ooo.","especificacao":"Contém as edições Adventure Time 1 - 4","bundle":"hora-de-aventura","valor":28.33,"imagem":"https://m.media-amazon.com/images/I/81Kv07FvNJL._AC_UF1000,1000_QL80_.jpg","tag":"Graphic Novels"},{"titulo":"Hora de Aventura","subtitulo":"Edição Matemática","volume":"Vol. 2","editora":"Panini Books","descricao":"Novas missões absurdas com Finn e Jake, lidando com os esquemas do Rei Gelado.","especificacao":"Contém as edições Adventure Time 5 - 9","bundle":"hora-de-aventura","valor":28.33,"imagem":"https://m.media-amazon.com/images/I/91JGGXDoh0L._AC_UF1000,1000_QL80_.jpg","tag":"Graphic Novels"},{"titulo":"Hora de Aventura","subtitulo":"Edição Matemática","volume":"Vol. 3","editora":"Panini Books","descricao":"Novos desafios envolvendo a Princesa Jujuba, a Princesa Caroço e aventuras épicas.","especificacao":"Contém as edições Adventure Time 10 - 14","bundle":"hora-de-aventura","valor":28.33,"imagem":"https://m.media-amazon.com/images/I/71lnO1806HL._AC_UF1000,1000_QL80_.jpg","tag":"Graphic Novels"},{"titulo":"Hora de Aventura","subtitulo":"Edição Matemática","volume":"Vol. 4","editora":"Panini Books","descricao":"As aventuras se intensificam com ameaças cósmicas e criaturas bizarras em Ooo.","especificacao":"Contém as edições Adventure Time 15 - 19","bundle":"hora-de-aventura","valor":28.33,"imagem":"https://m.media-amazon.com/images/I/71mZLfXcTCL._AC_UF1000,1000_QL80_.jpg","tag":"Graphic Novels"},{"titulo":"Hora de Aventura","subtitulo":"Com Fionna e Cake","volume":"Vol. Único","editora":"Panini Books","descricao":"A realidade alternativa do Rei Gelado, onde Fionna e Cake vivem suas próprias aventuras.","especificacao":"Contém Adventure Time with Fionna & Cake 1 - 6","bundle":"hora-de-aventura","valor":28.33,"imagem":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtD5uXfSpKc-eW31ETZXXuGOzvLb3_67QfoQ&s","tag":"Graphic Novels"},{"titulo":"Hora de Aventura Apresenta","subtitulo":"Marceline, a Rainha dos Gritos","volume":"Vol. Único","editora":"Panini Comics","descricao":"Marceline e a Princesa Jujuba formam uma banda para uma turnê de rock pela Terra de Ooo.","especificacao":"Contém Adventure Time: Marceline and the Scream Queens 1 - 6","bundle":"hora-de-aventura","valor":28.34,"imagem":"https://m.media-amazon.com/images/I/71B3XO9LsjL._AC_UF1000,1000_QL80_.jpg","tag":"Graphic Novels"},{"titulo":"Preacher","subtitulo":"A Caminho do Texas","volume":"Vol. 1","editora":"Panini Comics","descricao":"Jesse Custer é possuído por Gênesis e parte em uma violenta jornada pelos EUA para encontrar Deus.","especificacao":"Contém as edições Preacher 1 - 7","bundle":"avulsos","valor":30.00,"imagem":"https://m.media-amazon.com/images/I/61TTku67S+L._AC_UF1000,1000_QL80_.jpg","tag":"Graphic Novels"},{"titulo":"Projetos Manhattan","subtitulo":"Ciência Ruim","volume":"Vol. 1","editora":"Panini Comics","descricao":"E se a bomba atômica fosse apenas uma fachada para ideias muito mais bizarras e perigosas?","especificacao":"Contém as edições The Manhattan Projects 1 - 5","bundle":"avulsos","valor":30.00,"imagem":"https://m.media-amazon.com/images/I/81Ld5rD00yL._AC_UF1000,1000_QL80_.jpg","tag":"Graphic Novels"},{"titulo":"Corpos","subtitulo":"","volume":"Vol. Único","editora":"Panini Comics","descricao":"Quatro detetives em quatro épocas de Londres investigam o mesmo assassinato. Um mistério que transcende o tempo.","especificacao":"Contém as edições Bodies 1 - 8","bundle":"avulsos","valor":10.00,"imagem":"https://m.media-amazon.com/images/I/61smxBacATL._AC_UF1000,1000_QL80_.jpg","tag":"Graphic Novels"},{"titulo":"Como uma Luva de Veludo Moldada em Ferro","subtitulo":"","volume":"Vol. Único","editora":"Editora Nemo","descricao":"Uma jornada surreal de Clay Loudermilk em busca de sua ex-mulher. Uma perturbadora obra de Daniel Clowes.","especificacao":"Volume Único","bundle":"avulsos","valor":10.00,"imagem":"https://m.media-amazon.com/images/I/9102fifdW1L._AC_UF1000,1000_QL80_.jpg","tag":"Graphic Novels"},{"titulo":"Monster Hunter Rise","subtitulo":"","volume":"Nintendo Switch","editora":"Capcom","descricao":"Enfrente monstros imensos e use novas habilidades com o Cabinsecto para proteger a Aldeia Kamura.","especificacao":"Mídia Física","bundle":"nenhum","valor":140.00,"imagem":"https://m.media-amazon.com/images/I/814mH7g4wdL._AC_UF1000,1000_QL80_.jpg","tag":"Jogos"},{"titulo":"Dark Souls","subtitulo":"Remastered","volume":"Nintendo Switch","editora":"Bandai Namco","descricao":"Retorne a Lordran nesta versão remasterizada em alta definição de um dos jogos mais desafiadores já criados.","especificacao":"Mídia Física","bundle":"nenhum","valor":170.00,"imagem":"https://m.media-amazon.com/images/I/71uGmXybuAL._AC_UF1000,1000_QL80_.jpg","tag":"Jogos"},{"titulo":"Final Fantasy XII","subtitulo":"The Zodiac Age","volume":"Nintendo Switch","editora":"Square Enix","descricao":"Entre no mundo de Ivalice. Versão remasterizada com sistema de batalha aprimorado e trilha sonora reformulada.","especificacao":"Mídia Física","bundle":"nenhum","valor":120.00,"imagem":"https://m.media-amazon.com/images/I/61F725bl1iL._AC_UF1000,1000_QL80_.jpg","tag":"Jogos"},{"titulo":"Civilization VI","subtitulo":"Sid Meier's","volume":"Nintendo Switch","editora":"2K Games","descricao":"Construa um império que resista ao teste do tempo neste aclamado jogo de estratégia por turnos.","especificacao":"Mídia Física","bundle":"nenhum","valor":80.00,"imagem":"https://m.media-amazon.com/images/I/81JeqskUs2L._AC_UF1000,1000_QL80_.jpg","tag":"Jogos"},{"titulo":"Magic: The Gathering","subtitulo":"Call for Backup — Commander Deck","volume":"Deck de 100 Cartas","editora":"Wizards of the Coast","descricao":"Deck Commander de March of the Machine liderado por Bright-Palm, Soul Awakener.","especificacao":"100 cartas, 10 cartas Planechase, 1 dado planar e Acompanha sleeves","bundle":"nenhum","valor":270.00,"imagem":"https://m.media-amazon.com/images/S/aplus-media-library-service-media/3fdc4aa3-629b-45bb-b844-0cda53074a69.__CR0,0,970,600_PT0_SX970_V1___.jpg","tag":"Outros"},{"titulo":"Samsung Galaxy Watch 6","subtitulo":"Smartwatch Bluetooth","volume":"40mm / 44mm","editora":"Samsung","descricao":"Smartwatch com monitoramento avançado de sono, análise de composição corporal e sensor cardíaco óptico.","especificacao":"Cor: Grafite, Bluetooth/Wi-Fi, Wear OS","bundle":"nenhum","valor":750.00,"imagem":"https://cdn.mos.cms.futurecdn.net/pZgEtrw6kQwKpGMTMmmuDF.jpg","tag":"Eletrônicos"}];
+
+// ── Helpers ─────────────────────────────────────────────
+function brl(v) {
+  return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+function tagCls(t) { return TAG_CLASS[t] || ''; }
+function waLink(msg) { return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`; }
+
+// ── Process data ─────────────────────────────────────────
+function process(items) {
+  const groups = {};
+  const solo = [];
+  items.forEach(item => {
+    if (STANDALONE.has(item.bundle)) { solo.push(item); }
+    else {
+      (groups[item.bundle] = groups[item.bundle] || []).push(item);
+    }
+  });
+
+  const bundles = Object.entries(groups).map(([key, its]) => {
+    const total = Math.round(its.reduce((s, i) => s + i.valor, 0) * 100) / 100;
+    const disc  = Math.round(total * 0.91 * 100) / 100;
+    const save  = Math.round((total - disc) * 100) / 100;
+    const imgs  = its.map(i => i.imagem).filter(Boolean);
+    const tags  = [...new Set(its.map(i => i.tag))];
+    const name  = BUNDLE_NAMES[key] || its[0].titulo;
+    const list  = its.map(i => `  • ${i.titulo}${i.subtitulo ? ': ' + i.subtitulo : ''} (${i.volume})`).join('\n');
+    const msg   = `Olá! Tenho interesse na *Coleção ${name}* 📚\n\n` +
+                  `Itens inclusos (${its.length} volumes):\n${list}\n\n` +
+                  `💰 Total: ${brl(total)} → *${brl(disc)}* (9% OFF)\n\n` +
+                  `Poderia me passar mais informações sobre disponibilidade e envio?`;
+    const displayCount = VOLUME_COUNT[key] || its.length;
+    return { type:'bundle', id:key, name, tags, items:its, imgs, total, disc, save, wa:waLink(msg), displayCount };
+  });
+
+  const standalones = solo.map(item => {
+    const msg = `Olá! Tenho interesse em:\n\n` +
+                `📗 *${item.titulo}${item.subtitulo ? ': ' + item.subtitulo : ''}*\n` +
+                `📦 ${item.volume}\n🏢 ${item.editora}\n\n` +
+                `💰 Valor: *${brl(item.valor)}*\n\n` +
+                `Poderia me passar mais informações sobre disponibilidade e envio?`;
+    return { type:'standalone', id:`${item.titulo}_${item.volume}`, ...item, tags:[item.tag], wa:waLink(msg) };
+  });
+
+  return [...bundles, ...standalones];
+}
+
+// ── Render helpers ───────────────────────────────────────
+const WA_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.556 4.122 1.527 5.854L.057 23.454a.5.5 0 00.595.617l5.741-1.504A11.941 11.941 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.869 0-3.626-.479-5.157-1.322l-.367-.209-3.808.998 1.016-3.706-.228-.376A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>`;
+
+function tagBadge(t) {
+  return `<span class="tag ${tagCls(t)}">${t}</span>`;
+}
+
+function bundleImgs(imgs) {
+  if (!imgs.length) return `<div class="img-placeholder">📚</div>`;
+  const src = imgs.slice(0, 3);
+  if (src.length === 1) {
+    return `<div class="stack-wrap"><div class="stk solo"><img src="${src[0]}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\'background:#1a1a2c;width:100%;height:100%\'></div>'"></div></div>`;
+  }
+  return `<div class="stack-wrap">${src.map((s, i) =>
+    `<div class="stk s${i}"><img src="${s}" alt="" loading="lazy" onerror="this.parentElement.style.background='#1a1a2c'"></div>`
+  ).join('')}</div>`;
+}
+
+function renderBundle(p) {
+  const chips = p.items.slice(0, 4).map(i => `<span class="chip">${i.subtitulo || i.volume}</span>`).join('');
+  const more  = p.items.length > 4 ? `<span class="chip">+${p.items.length - 4} mais</span>` : '';
+  return `
+<article class="card" data-tags="${p.tags.join(',')}">
+  <div class="card-img-wrap">
+    ${bundleImgs(p.imgs)}
+    <div class="badges">
+      <div style="display:flex;gap:4px;flex-wrap:wrap">${p.tags.map(tagBadge).join('')}</div>
+      <span class="off-badge">9% OFF</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="vol-label">${p.displayCount} volumes inclusos</div>
+    <h2 class="card-title">Coleção ${p.name}</h2>
+    <div class="chips">${chips}${more}</div>
+    <div class="spacer"></div>
+    <div class="price-row">
+      <div class="prices">
+        <span class="price-orig">${brl(p.total)}</span>
+        <span class="price-main gold">${brl(p.disc)}</span>
+        <span class="price-save">Você economiza ${brl(p.save)}</span>
+      </div>
+      <a href="${p.wa}" class="btn-wa" target="_blank" rel="noopener" aria-label="Comprar via WhatsApp">
+        ${WA_SVG}<span>Tenho Interesse</span>
+      </a>
+    </div>
+  </div>
+</article>`;
+}
+
+function renderStandalone(p) {
+  const imgHtml = p.imagem
+    ? `<img class="solo-img" src="${p.imagem}" alt="${p.titulo}" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`+
+      `<div class="img-placeholder" style="display:none">${p.titulo.charAt(0)}</div>`
+    : `<div class="img-placeholder">${p.titulo.charAt(0)}</div>`;
+  const sub = p.subtitulo ? `<p class="card-sub">${p.subtitulo}</p>` : '';
+  return `
+<article class="card" data-tags="${p.tag}">
+  <div class="card-img-wrap">
+    ${imgHtml}
+    <div class="badges">${tagBadge(p.tag)}</div>
+  </div>
+  <div class="card-body">
+    <div class="vol-label">${p.volume}</div>
+    <h2 class="card-title">${p.titulo}</h2>
+    ${sub}
+    <div class="spacer"></div>
+    <div class="price-row">
+      <div class="prices">
+        <span class="price-main white">${brl(p.valor)}</span>
+      </div>
+      <a href="${p.wa}" class="btn-wa" target="_blank" rel="noopener" aria-label="Comprar via WhatsApp">
+        ${WA_SVG}<span>Tenho Interesse</span>
+      </a>
+    </div>
+  </div>
+</article>`;
+}
+
+// ── State & render ───────────────────────────────────────
+const ALL = process(RAW);
+let active = 'todos';
+
+function getFiltered() {
+  return active === 'todos' ? ALL : ALL.filter(p => p.tags.includes(active));
+}
+
+function animateCards(grid) {
+  const cards = grid.querySelectorAll('.card');
+  let idx = 0;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const delay = Math.min(idx++, 9) * 55;
+        setTimeout(() => e.target.classList.add('in'), delay);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.04, rootMargin: '0px 0px -30px 0px' });
+  cards.forEach(c => obs.observe(c));
+}
+
+function render() {
+  const filtered = getFiltered();
+  const grid = document.getElementById('grid');
+  document.getElementById('cat-title').textContent = active === 'todos' ? 'Todos os itens' : active;
+  document.getElementById('cat-count').textContent = `${filtered.length} ${filtered.length === 1 ? 'item' : 'itens'}`;
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty"><h3>Nenhum item encontrado</h3><p>Tente outro filtro.</p></div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(p => p.type === 'bundle' ? renderBundle(p) : renderStandalone(p)).join('');
+  animateCards(grid);
+}
+
+function buildFilters() {
+  const allTags = ALL.flatMap(p => p.tags);
+  const unique = [...new Set(allTags)];
+  const wrap = document.getElementById('filters');
+  wrap.innerHTML = ['Todos', ...unique].map(t => {
+    const val = t === 'Todos' ? 'todos' : t;
+    return `<button class="f-btn${val === 'todos' ? ' active' : ''}" data-f="${val}">${t}</button>`;
+  }).join('');
+  wrap.addEventListener('click', e => {
+    const btn = e.target.closest('.f-btn');
+    if (!btn) return;
+    wrap.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    active = btn.dataset.f;
+    render();
+    document.getElementById('grid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+}
+
+function buildHeroStats() {
+  const bundles = ALL.filter(p => p.type === 'bundle').length;
+  document.getElementById('hero-stats').innerHTML = `
+    <div><div class="stat-val">${ALL.length}</div><div class="stat-lbl">Itens disponíveis</div></div>
+    <div><div class="stat-val">${bundles}</div><div class="stat-lbl">Coleções completas</div></div>
+    <div><div class="stat-val">10%</div><div class="stat-lbl">Desconto em coleções</div></div>`;
+}
+
+// ── Modal ─────────────────────────────────────────────────
+const overlay = document.getElementById('modal-overlay');
+const modal   = document.getElementById('modal');
+
+function openModal(product) {
+  modal.innerHTML = buildModalHTML(product);
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  modal.querySelector('.modal-close').addEventListener('click', closeModal);
+}
+
+function closeModal() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function buildModalHTML(p) {
+  if (p.type === 'bundle') {
+    const imgHTML = (() => {
+      if (!p.imgs.length) return `<div class="img-placeholder" style="height:100%">📚</div>`;
+      const src = p.imgs.slice(0, 3);
+      if (src.length === 1) return `<img src="${src[0]}" alt="${p.name}" onerror="this.style.display='none'">`;
+      return `<div class="modal-hero-stack">${src.map((s,i)=>
+        `<div class="stk s${i}"><img src="${s}" alt="" loading="lazy" onerror="this.parentElement.style.background='#1a1a2c'"></div>`
+      ).join('')}</div>`;
+    })();
+
+    const rows = p.items.map((it) => {
+      const thumb = it.imagem
+        ? `<img src="${it.imagem}" alt="${it.titulo}" loading="lazy" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span style=\'font-size:.9rem\'>📚</span>')">`
+        : `<div class="vol-thumb-placeholder">📚</div>`;
+      return `
+      <div class="vol-row">
+        <div class="vol-thumb">${thumb}</div>
+        <div class="vol-info">
+          <div class="vol-title">${it.titulo}${it.subtitulo ? ' — ' + it.subtitulo : ''}</div>
+          <div class="vol-spec">${it.especificacao}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `
+      <div style="position:relative">
+        <div class="modal-hero">
+          ${imgHTML}
+          <div class="modal-badges">
+            <div style="display:flex;gap:4px;flex-wrap:wrap">${p.tags.map(tagBadge).join('')}</div>
+            <span class="off-badge">9% OFF</span>
+          </div>
+          <button class="modal-close" aria-label="Fechar">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-vol-label">${p.displayCount} volumes inclusos</div>
+          <h2 class="modal-title">Coleção ${p.name}</h2>
+          <div class="vol-list">${rows}</div>
+          <div class="modal-price-row">
+            <div class="modal-prices">
+              <span class="modal-orig">${brl(p.total)}</span>
+              <span class="modal-main gold">${brl(p.disc)}</span>
+              <span class="modal-save">Você economiza ${brl(p.save)}</span>
+            </div>
+            <a href="${p.wa}" class="btn-wa" target="_blank" rel="noopener">
+              ${WA_SVG}<span>Tenho Interesse</span>
+            </a>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    // standalone
+    const imgHTML = p.imagem
+      ? `<img src="${p.imagem}" alt="${p.titulo}" onerror="this.style.display='none'">`
+      : `<div class="img-placeholder" style="height:100%">${p.titulo.charAt(0)}</div>`;
+    const sub = p.subtitulo ? `<p class="modal-sub">${p.subtitulo}</p>` : '';
+    const desc = p.descricao ? `<p class="modal-sub" style="margin-bottom:0.5rem">${p.descricao}</p>` : '';
+    const spec = p.especificacao ? `<p class="modal-sub" style="font-size:0.78rem;opacity:0.7">${p.especificacao}</p>` : '';
+    return `
+      <div style="position:relative">
+        <div class="modal-hero">
+          ${imgHTML}
+          <div class="modal-badges">${tagBadge(p.tag)}</div>
+          <button class="modal-close" aria-label="Fechar">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-vol-label">${p.volume}</div>
+          <h2 class="modal-title">${p.titulo}</h2>
+          ${sub}
+          ${desc}
+          ${spec}
+          <div class="modal-price-row" style="margin-top:1.25rem">
+            <div class="modal-prices">
+              <span class="modal-main white">${brl(p.valor)}</span>
+            </div>
+            <a href="${p.wa}" class="btn-wa" target="_blank" rel="noopener">
+              ${WA_SVG}<span>Tenho Interesse</span>
+            </a>
+          </div>
+        </div>
+      </div>`;
+  }
+}
+
+// ── Card click delegation ─────────────────────────────────
+document.getElementById('grid').addEventListener('click', e => {
+  // Don't open modal if clicking the WA button itself
+  if (e.target.closest('.btn-wa')) return;
+  const card = e.target.closest('.card');
+  if (!card) return;
+  const filtered = getFiltered();
+  const idx = Array.from(document.querySelectorAll('.card')).indexOf(card);
+  if (idx !== -1) openModal(filtered[idx]);
+});
+
+// ── Featured Carousel ────────────────────────────────────
+// Featured order: Watch + Commander first, then games
+const FEATURED_ORDER = [
+  'Samsung Galaxy Watch 6',
+  'Magic: The Gathering',
+  'Monster Hunter Rise',
+  'Dark Souls',
+  'Final Fantasy XII',
+  'Civilization VI',
+];
+const featuredItems = (() => {
+  const byTitle = {};
+  RAW.forEach(i => { if (FEATURED_ORDER.includes(i.titulo)) byTitle[i.titulo] = i; });
+  return FEATURED_ORDER.map(t => byTitle[t]).filter(Boolean);
+})();
+
+function renderFcard(item) {
+  const imgHtml = item.imagem
+    ? `<img src="${item.imagem}" alt="${item.titulo}" loading="lazy" onerror="this.style.display='none'">`
+    : `<div class="img-placeholder" style="height:100%">${item.titulo.charAt(0)}</div>`;
+  const waMsg = `Olá! Tenho interesse em:\n\n` +
+    `🎮 *${item.titulo}${item.subtitulo ? ': ' + item.subtitulo : ''}*\n` +
+    `📦 ${item.volume}\n🏢 ${item.editora}\n\n` +
+    `💰 Valor: *${brl(item.valor)}*\n\n` +
+    `Poderia me passar mais informações sobre disponibilidade e envio?`;
+  return `
+<div class="fcard" data-wa="${waLink(waMsg).replace(/"/g,'&quot;')}">
+  <div class="fcard-img">
+    ${imgHtml}
+    <div class="fcard-badges">${tagBadge(item.tag)}</div>
+  </div>
+  <div class="fcard-body">
+    <div class="fcard-platform">${item.editora}</div>
+    <div class="fcard-title">${item.titulo}${item.subtitulo ? ': ' + item.subtitulo : ''}</div>
+    <div class="fcard-sub">${item.volume}</div>
+    <div class="fcard-footer">
+      <span class="fcard-price">${brl(item.valor)}</span>
+      <a href="${waLink(waMsg)}" class="fcard-wa" target="_blank" rel="noopener" aria-label="Comprar via WhatsApp" onclick="event.stopPropagation()">
+        ${WA_SVG}
+      </a>
+    </div>
+  </div>
+</div>`;
+}
+
+function buildCarousel() {
+  const track    = document.getElementById('carousel-track');
+  const dotsWrap = document.getElementById('carousel-dots');
+  const prevBtn  = document.getElementById('car-prev');
+  const nextBtn  = document.getElementById('car-next');
+  const wrap     = track.parentElement; // .carousel-track-wrap
+
+  track.innerHTML = featuredItems.map(renderFcard).join('');
+  requestAnimationFrame(() => {
+    track.querySelectorAll('.fcard').forEach((c, i) => {
+      setTimeout(() => c.classList.add('in'), i * 80);
+    });
+  });
+
+  // ── State ──────────────────────────────────────────────
+  let current   = 0;
+  let autoDir   = 1;        // bounces between +1 / -1
+  let autoTimer = null;
+  let dragActive = false;
+  let dragMoved  = false;
+  let dragStartX = 0;
+  let dragStartOffset = 0;
+  let dragLastX  = 0;
+  let dragVelocity = 0;     // px/ms, for flick
+
+  // ── Helpers ────────────────────────────────────────────
+  function cw() {
+    const c = track.querySelector('.fcard');
+    return c ? c.getBoundingClientRect().width + 16 : 276; // 16 = gap (1rem)
+  }
+  function maxOffset() { return (featuredItems.length - 1) * cw(); }
+
+  function applyTransform(px, smooth) {
+    track.style.transition = smooth
+      ? 'transform 0.52s cubic-bezier(0.33,1,0.68,1)'  // ease-out-cubic — decelerates naturally
+      : 'none';
+    track.style.transform = `translateX(${-px}px)`;
+  }
+
+  function syncUI() {
+    dotsWrap.querySelectorAll('.c-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current >= featuredItems.length - 1;
+  }
+
+  function goTo(idx, smooth = true) {
+    current = Math.max(0, Math.min(Math.round(idx), featuredItems.length - 1));
+    applyTransform(current * cw(), smooth);
+    syncUI();
+  }
+
+  // ── Dots ───────────────────────────────────────────────
+  dotsWrap.innerHTML = featuredItems.map((_,i) =>
+    `<div class="c-dot${i===0?' active':''}" data-i="${i}"></div>`
+  ).join('');
+  dotsWrap.addEventListener('click', e => {
+    const d = e.target.closest('.c-dot');
+    if (d) { resetAuto(); goTo(+d.dataset.i); }
+  });
+
+  // ── Arrows ─────────────────────────────────────────────
+  prevBtn.addEventListener('click', () => { resetAuto(); goTo(current - 1); });
+  nextBtn.addEventListener('click', () => { resetAuto(); goTo(current + 1); });
+  prevBtn.disabled = true;
+
+  // ── Resize ─────────────────────────────────────────────
+  window.addEventListener('resize', () => goTo(current, false), { passive: true });
+
+  // ── Auto-scroll (bounce) ───────────────────────────────
+  const AUTO_MS = 3200;
+  function tick() {
+    const next = current + autoDir;
+    if (next >= featuredItems.length) { autoDir = -1; goTo(current - 1); }
+    else if (next < 0)               { autoDir =  1; goTo(current + 1); }
+    else                              { goTo(next); }
+    prevBtn.disabled = false; nextBtn.disabled = false; // re-enable after bounce
+  }
+  function startAuto() { autoTimer = setInterval(tick, AUTO_MS); }
+  function stopAuto()  { clearInterval(autoTimer); autoTimer = null; }
+  function resetAuto() { stopAuto(); startAuto(); }
+
+  // Auto-scroll disabled
+
+  // ── Drag / Swipe ───────────────────────────────────────
+  let dragTimestamp = 0;
+
+  function onDragStart(x) {
+    dragActive   = true;
+    dragMoved    = false;
+    dragStartX   = x;
+    dragLastX    = x;
+    dragVelocity = 0;
+    dragTimestamp = performance.now();
+    dragStartOffset = current * cw();
+    track.style.transition = 'none';
+    wrap.classList.add('dragging');
+    stopAuto();
+  }
+
+  function onDragMove(x) {
+    if (!dragActive) return;
+    const now = performance.now();
+    const dt  = now - dragTimestamp || 1;
+    dragVelocity = (x - dragLastX) / dt;  // px/ms, positive = right
+    dragLastX  = x;
+    dragTimestamp = now;
+
+    const dx = x - dragStartX;
+    if (Math.abs(dx) > 4) dragMoved = true;
+    if (!dragMoved) return;
+
+    // Rubber-band resistance at edges
+    let raw = dragStartOffset - dx;
+    if (raw < 0)             raw = raw * 0.25;
+    if (raw > maxOffset())   raw = maxOffset() + (raw - maxOffset()) * 0.25;
+
+    track.style.transform = `translateX(${-raw}px)`;
+  }
+
+  function onDragEnd(x) {
+    if (!dragActive) return;
+    dragActive = false;
+    wrap.classList.remove('dragging');
+
+    if (dragMoved) {
+      const dx = x - dragStartX;
+      const speed = Math.abs(dragVelocity); // px/ms
+
+      let target;
+      if (speed > 0.4) {
+        // Flick: advance in direction of velocity
+        target = dragVelocity > 0 ? current - 1 : current + 1;
+      } else {
+        // Snap to nearest based on distance
+        const endOffset = dragStartOffset - dx;
+        target = Math.round(endOffset / cw());
+      }
+      goTo(target);
+    }
+
+    setTimeout(() => { dragMoved = false; }, 0);
+    resetAuto();
+  }
+
+  // Mouse events
+  wrap.addEventListener('mousedown', e => { e.preventDefault(); onDragStart(e.clientX); });
+  window.addEventListener('mousemove', e => onDragMove(e.clientX));
+  window.addEventListener('mouseup',  e => onDragEnd(e.clientX));
+
+  // Touch events
+  wrap.addEventListener('touchstart', e => onDragStart(e.touches[0].clientX), { passive: true });
+  wrap.addEventListener('touchmove',  e => { onDragMove(e.touches[0].clientX); }, { passive: true });
+  wrap.addEventListener('touchend',   e => onDragEnd(e.changedTouches[0].clientX));
+
+  // ── Click → modal (only if not dragged) ────────────────
+  track.addEventListener('click', e => {
+    if (dragMoved) return;
+    if (e.target.closest('.fcard-wa')) return;
+    const card = e.target.closest('.fcard');
+    if (!card) return;
+    const idx = Array.from(track.querySelectorAll('.fcard')).indexOf(card);
+    if (idx === -1) return;
+    const item = featuredItems[idx];
+    const waMsg = `Olá! Tenho interesse em:\n\n` +
+      `🎮 *${item.titulo}${item.subtitulo ? ': ' + item.subtitulo : ''}*\n` +
+      `📦 ${item.volume}\n🏢 ${item.editora}\n\n` +
+      `💰 Valor: *${brl(item.valor)}*\n\n` +
+      `Poderia me passar mais informações sobre disponibilidade e envio?`;
+    openModal({ type:'standalone', ...item, tags:[item.tag], wa:waLink(waMsg) });
+  });
+
+  syncUI();
+}
+
+// ── Header scroll ────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('site-header').style.background =
+    scrollY > 10 ? 'rgba(7,7,15,0.97)' : 'rgba(7,7,15,0.82)';
+}, { passive: true });
+
+// ── Init ─────────────────────────────────────────────────
+buildFilters();
+buildCarousel();
+render();
+</script>
+</body>
+</html>
